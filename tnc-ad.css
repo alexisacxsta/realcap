@@ -33,11 +33,22 @@ h3 {
 }
 
 .seat {
-  width: 25px; /* Adjusted width for seat */
-  height: 25px; /* Adjusted height for seat */
-  background-color: #e0e0e0; /* Gray for available */
+  width: 25px;
+  height: 25px;
+  background-color: #e0e0e0;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative; /* Position relative for absolute positioning */
+}
+
+.seat img {
+  position: absolute; /* Position absolute for positioning the image */
+  left: -30px; /* Adjust the left position based on the image width */
+  height: 25px;
+  width: 25px;
 }
 
 .occupied {
@@ -110,5 +121,3 @@ h3 {
   grid-template-rows: repeat(3, 40px); /* Adjusted height for rows */
   grid-gap: 10px; /* Adjusted gap between seats */
 }
-
-
