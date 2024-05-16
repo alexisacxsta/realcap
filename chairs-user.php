@@ -1,3 +1,11 @@
+<?php
+require_once('DBseatInitialize.php'); // Include the file containing the DBseatInitialize class
+
+// Initialize seats
+$dbSeatInitialize = new DBseatInitialize();
+$dbSeatInitialize->initializeSeats();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
