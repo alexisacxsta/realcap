@@ -13,7 +13,7 @@ $dbSeatInitialize->initializeSeats();
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin View - Library Seat Viewer</title>
-  <link rel="stylesheet" href="chairs-admin.css">
+  <link rel="stylesheet" href="tnc-ad.css">
 </head>
 <body>
   <div class="container">
@@ -29,24 +29,41 @@ $dbSeatInitialize->initializeSeats();
       </div>
     </div>
     <div class="allseats">
-        <h3>Tables and Chairs</h3>
-        <div id="tables-chairs" class="layout tables-chairs">
-          <!-- Tables and chairs layout will be dynamically generated here -->
-        </div>
-        <div class="available-seats">Available Seats: <span id="tables-chairs-available-seat-count">160</span> Seats</div>
+      <h3>Tables and Chairs</h3>
+      <div class="layout-container">
+        <div id="tables-chairs" class="layout tables-chairs"></div>
       </div>
-      <h3>Computer Seats</h3>
-      <div id="computer-seats" class="layout computer">
-        <!-- Computer seats layout will be dynamically generated here -->
+      <div class="available-seats">
+        Available Seats: <span id="tables-chairs-available-seat-count">160</span> Seats
       </div>
-      <div class="available-seats">Available Seats: <span id="computer-seats-available-seat-count">9</span> Seats</div>
-      <h3>Graduate Study</h3>
-      <div id="graduate-seats" class="layout graduate">
-        <!-- Graduate study seats layout will be dynamically generated here -->
+      <div class="button-container">
+        <button onclick="addSeat('tables-chairs')" class="add-button">Add Seat</button>
+        <button onclick="removeSeat('tables-chairs')" class="remove-button">Remove Seat</button>
       </div>
-      <div class="available-seats">Available Seats: <span id="graduate-seats-available-seat-count">30</span> Seats</div>
+    </div>
+    <h3>Computer Seats</h3>
+    <div class="layout-container">
+      <div id="computer-seats" class="layout computer"></div>
+    </div>
+    <div class="available-seats">
+      Available Seats: <span id="computer-seats-available-seat-count">9</span> Seats
+    </div>
+    <div class="button-container">
+      <button onclick="addSeat('computer-seats')" class="add-button">Add Seat</button>
+      <button onclick="removeSeat('computer-seats')" class="remove-button">Remove Seat</button>
+    </div>
+    <h3>Graduate Study</h3>
+    <div class="layout-container">
+      <div id="graduate-seats" class="layout graduate"></div>
+    </div>
+    <div class="available-seats">
+      Available Seats: <span id="graduate-seats-available-seat-count">30</span> Seats
+    </div>
+    <div class="button-container">
+      <button onclick="addSeat('graduate-seats')" class="add-button">Add Seat</button>
+      <button onclick="removeSeat('graduate-seats')" class="remove-button">Remove Seat</button>
     </div>
   </div>
-  <script src="chairs-admin.js"></script>
+  <script src="tnc-ad.js"></script>
 </body>
 </html>
