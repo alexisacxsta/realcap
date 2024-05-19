@@ -12,7 +12,7 @@ $dbSeatInitialize->initializeSeats();
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User View - Library Seat Viewer</title>
-  <link rel="stylesheet" href="chairs-user.css">
+  <link rel="stylesheet" href="tnc-user.css">
   <script src="navact.js"></script>
 </head>
 <body>
@@ -22,7 +22,7 @@ $dbSeatInitialize->initializeSeats();
       <a href="home.html" id="homeLink">Home</a>
       <a href="browse.html" id="browseLink">Books</a>
       <a href="scan.html" id="scanLink">AR Scan</a>
-      <a href="chairs-user.html" id="chairsLink" class="active">Chairs</a>
+      <a href="tnc-user.html" id="chairsLink" class="active">Chairs</a>
       <a href="about.html" id="aboutLink">About</a>
     </nav>
   </header>
@@ -58,6 +58,6 @@ $dbSeatInitialize->initializeSeats();
       <div class="available-seats">Available Seats: <span id="graduate-seats-available-seat-count">30</span> Seats</div>
     </div>
   </div>
-  <script src="chairs-user.js"></script>
+  <script src="tnc-user.js"></script>
 </body>
 </html>
