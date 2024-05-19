@@ -11,88 +11,101 @@ document.addEventListener("DOMContentLoaded", function() {
   const COMPUTER_SEATS = 9;
   const GRADUATE_SEATS = 30;
 
-  // Function to render seats and update available seat count
-  function renderSeats(container, availableSeatCountElement, start, totalSeats, seatsState) {
-    container.innerHTML = ""; // Clear container
+  let seatsState = JSON.parse(localStorage.getItem("seatsState")) || [];
+  let totalSeats = JSON.parse(localStorage.getItem("totalSeats")) || {
+    tablesChairs: TABLES_CHAIRS_SEATS,
+    computer: COMPUTER_SEATS,
+    graduate: GRADUATE_SEATS,
+  };
+
+  if (seatsState.length !== TOTAL_SEATS) {
+    seatsState = Array(TOTAL_SEATS).fill(false);
+    localStorage.setItem("seatsState", JSON.stringify(seatsState));
+  }
+
+  function renderSeats(container, availableSeatCountElement, start, totalSeats) {
+    container.innerHTML = "";
     let availableCount = 0;
     seatsState.slice(start, start + totalSeats).forEach((occupied, index) => {
       const seat = document.createElement("div");
       seat.classList.add(occupied ? "occupied" : "seat");
       seat.dataset.id = start + index;
       container.appendChild(seat);
-      if (!occupied) {
-        availableCount++;
-      }
+      if (!occupied) availableCount++;
     });
     availableSeatCountElement.textContent = availableCount;
   }
 
-  // Function to handle seat click
-  function seatClickHandler(event, container, availableSeatCountElement, start, totalSeats) {
+  function renderAll() {
+    renderSeats(tablesChairsContainer, tablesChairsAvailableSeatCount, 0, totalSeats.tablesChairs);
+    renderSeats(computerSeatsContainer, computerSeatsAvailableSeatCount, totalSeats.tablesChairs, totalSeats.computer);
+    renderSeats(graduateStudyContainer, graduateStudyAvailableSeatCount, totalSeats.tablesChairs + totalSeats.computer, totalSeats.graduate);
+  }
+
+  function saveState() {
+    localStorage.setItem("seatsState", JSON.stringify(seatsState));
+    localStorage.setItem("totalSeats", JSON.stringify(totalSeats));
+  }
+
+  function addSeat(section) {
+    if (section === "tables-chairs") {
+      totalSeats.tablesChairs++;
+      seatsState.splice(totalSeats.tablesChairs, 0, false);
+    } else if (section === "computer-seats") {
+      totalSeats.computer++;
+      seatsState.splice(totalSeats.tablesChairs + totalSeats.computer, 0, false);
+    } else if (section === "graduate-seats") {
+      totalSeats.graduate++;
+      seatsState.splice(totalSeats.tablesChairs + totalSeats.computer + totalSeats.graduate, 0, false);
+    }
+    saveState();
+    renderAll();
+  }
+
+  function removeSeat(section) {
+    if (section === "tables-chairs" && totalSeats.tablesChairs > 0) {
+      totalSeats.tablesChairs--;
+      seatsState.splice(totalSeats.tablesChairs, 1);
+    } else if (section === "computer-seats" && totalSeats.computer > 0) {
+      totalSeats.computer--;
+      seatsState.splice(totalSeats.tablesChairs + totalSeats.computer, 1);
+    } else if (section === "graduate-seats" && totalSeats.graduate > 0) {
+      totalSeats.graduate--;
+      seatsState.splice(totalSeats.tablesChairs + totalSeats.computer + totalSeats.graduate, 1);
+    }
+    saveState();
+    renderAll();
+  }
+
+  window.addSeat = addSeat;
+  window.removeSeat = removeSeat;
+
+  renderAll();
+
+  tablesChairsContainer.addEventListener("click", function(event) {
     if (event.target.classList.contains("seat") || event.target.classList.contains("occupied")) {
       const seatId = parseInt(event.target.dataset.id);
-      const seatType = container.id;
-      const occupied = !event.target.classList.contains("occupied");
-      updateSeatState(seatId, seatType, occupied)
-        .then(response => {
-          if (response === "success") {
-            const seatsState = JSON.parse(localStorage.getItem("seatsState"));
-            seatsState[seatId] = occupied; // Update local seat state
-            localStorage.setItem("seatsState", JSON.stringify(seatsState)); // Update local storage
-            renderSeats(container, availableSeatCountElement, start, totalSeats, seatsState); // Update view
-          } else {
-            alert("Failed to update seat state.");
-          }
-        })
-        .catch(error => {
-          console.error("Error updating seat state:", error);
-          alert("An error occurred while updating seat state.");
-        });
+      seatsState[seatId] = !seatsState[seatId];
+      saveState();
+      renderSeats(tablesChairsContainer, tablesChairsAvailableSeatCount, 0, totalSeats.tablesChairs);
     }
-  }
-
-  // Function to update seat state in the database
-  function updateSeatState(seatId, seatType, occupied) {
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open("POST", "update-seat.php");
-      xhr.setRequestHeader("Content-Type", "application/json");
-      xhr.onload = function() {
-        if (xhr.status === 200) {
-          resolve(xhr.responseText);
-        } else {
-          reject(xhr.statusText);
-        }
-      };
-      xhr.onerror = function() {
-        reject(xhr.statusText);
-      };
-      xhr.send(JSON.stringify({ seatId, seatType, occupied }));
-    });
-  }
-
-  // Initialize seats state from local storage or set to empty array
-  let seatsState = JSON.parse(localStorage.getItem("seatsState"));
-  if (!seatsState || seatsState.length !== TOTAL_SEATS) {
-    seatsState = Array(TOTAL_SEATS).fill(false); // Ensure seatsState has TOTAL_SEATS elements
-    localStorage.setItem("seatsState", JSON.stringify(seatsState)); // Initialize local storage
-  }
-
-  // Render initial seats
-  renderSeats(tablesChairsContainer, tablesChairsAvailableSeatCount, 0, TABLES_CHAIRS_SEATS, seatsState);
-  renderSeats(computerSeatsContainer, computerSeatsAvailableSeatCount, TABLES_CHAIRS_SEATS, COMPUTER_SEATS, seatsState);
-  renderSeats(graduateStudyContainer, graduateStudyAvailableSeatCount, TABLES_CHAIRS_SEATS + COMPUTER_SEATS, GRADUATE_SEATS, seatsState);
-
-  // Event listeners for seat clicks
-  tablesChairsContainer.addEventListener("click", function(event) {
-    seatClickHandler(event, tablesChairsContainer, tablesChairsAvailableSeatCount, 0, TABLES_CHAIRS_SEATS);
   });
 
   computerSeatsContainer.addEventListener("click", function(event) {
-    seatClickHandler(event, computerSeatsContainer, computerSeatsAvailableSeatCount, TABLES_CHAIRS_SEATS, COMPUTER_SEATS);
+    if (event.target.classList.contains("seat") || event.target.classList.contains("occupied")) {
+      const seatId = parseInt(event.target.dataset.id);
+      seatsState[seatId] = !seatsState[seatId];
+      saveState();
+      renderSeats(computerSeatsContainer, computerSeatsAvailableSeatCount, totalSeats.tablesChairs, totalSeats.computer);
+    }
   });
 
   graduateStudyContainer.addEventListener("click", function(event) {
-    seatClickHandler(event, graduateStudyContainer, graduateStudyAvailableSeatCount, TABLES_CHAIRS_SEATS + COMPUTER_SEATS, GRADUATE_SEATS);
+    if (event.target.classList.contains("seat") || event.target.classList.contains("occupied")) {
+      const seatId = parseInt(event.target.dataset.id);
+      seatsState[seatId] = !seatsState[seatId];
+      saveState();
+      renderSeats(graduateStudyContainer, graduateStudyAvailableSeatCount, totalSeats.tablesChairs + totalSeats.computer, totalSeats.graduate);
+    }
   });
 });
